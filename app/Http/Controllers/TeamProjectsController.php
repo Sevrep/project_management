@@ -3,82 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\TeamProjects;
 
 class TeamProjectsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return TeamProjects::get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $newTeamProjects = new TeamProjects;
+        $newTeamProjects->teams_id = $request->team_projects["teams_id"];
+        $newTeamProjects->projects_id = $request->team_projects["projects_id"];
+        $newTeamProjects->save();
+        return $newTeamProjects;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function update(Request $request, $team_projects_id)
     {
-        //
+        $existingTeamProjects = TeamProjects::find($team_projects_id);
+
+        if ($existingTeamProjects) {
+            $existingTeamProjects->teams_id = $request->team_projects['teams_id'];
+            $existingTeamProjects->projects_id = $request->team_projects['projects_id'];
+            $existingTeamProjects->save();
+            return $existingTeamProjects;
+        }
+        return "Team project not found.";
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function destroy($team_projects_id)
     {
-        //
-    }
+        $existingTeamProjects = TeamProjects::find($team_projects_id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if ($existingTeamProjects) {
+            $existingTeamProjects->delete();
+            return "Team project " . $team_projects_id . " successfully deleted.";
+        }
+        return "Team project not found.";
     }
 }
