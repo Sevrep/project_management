@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class TeamMembers extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'team_members_id';
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamsController;
+use App\Http\Controllers\TeamMembersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,4 +25,11 @@ Route::prefix('/team')->group(function() {
     Route::post('/store', [TeamsController::class, 'store']);
     Route::put('/{teams_id}', [TeamsController::class, 'update']);
     Route::delete('/{teams_id}', [TeamsController::class, 'destroy']);
+});
+
+Route::get('/team_members', [TeamMembersController::class, 'index']);
+Route::prefix('/team_member')->group(function() {
+    Route::post('/store', [TeamMembersController::class, 'store']);
+    Route::put('/{team_members_id}', [TeamMembersController::class, 'update']);
+    Route::delete('/{team_members_id}', [TeamMembersController::class, 'destroy']);
 });

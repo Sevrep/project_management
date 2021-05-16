@@ -3,82 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\TeamMembers;
 
 class TeamMembersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return TeamMembers::get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $newTeamMembers = new TeamMembers;
+        $newTeamMembers->teams_id = $request->team_members["teams_id"];
+        $newTeamMembers->id = $request->team_members["id"];
+        $newTeamMembers->save();
+        return $newTeamMembers;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function update(Request $request, $team_members_id)
     {
-        //
+        $existingTeamMembers = TeamMembers::find($team_members_id);
+
+        if ($existingTeamMembers) {
+            $existingTeamMembers->teams_id = $request->team_members['teams_id'];
+            $existingTeamMembers->id = $request->team_members['id'];
+            $existingTeamMembers->save();
+            return $existingTeamMembers;
+        }
+        return "Team member not found.";
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function destroy($team_members_id)
     {
-        //
-    }
+        $existingTeamMembers = TeamMembers::find($team_members_id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if ($existingTeamMembers) {
+            $existingTeamMembers->delete();
+            return "Team member " . $team_members_id . " successfully deleted.";
+        }
+        return "Team member not found.";
     }
 }
