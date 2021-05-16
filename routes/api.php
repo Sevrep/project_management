@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\TeamMembersController;
+use App\Http\Controllers\TeamProjectsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +17,13 @@ use App\Http\Controllers\TeamMembersController;
 |
 */
 
+// PRIVATE ROUTES
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// PUBLIC ROUTES
+// Teams
 Route::get('/teams', [TeamsController::class, 'index']);
 Route::prefix('/team')->group(function() {
     Route::post('/store', [TeamsController::class, 'store']);
@@ -27,9 +31,18 @@ Route::prefix('/team')->group(function() {
     Route::delete('/{teams_id}', [TeamsController::class, 'destroy']);
 });
 
+// Team members
 Route::get('/team_members', [TeamMembersController::class, 'index']);
 Route::prefix('/team_member')->group(function() {
     Route::post('/store', [TeamMembersController::class, 'store']);
     Route::put('/{team_members_id}', [TeamMembersController::class, 'update']);
     Route::delete('/{team_members_id}', [TeamMembersController::class, 'destroy']);
+});
+
+// Team projects
+Route::get('/team_projects', [TeamProjectsController::class, 'index']);
+Route::prefix('/team_project')->group(function() {
+    Route::post('/store', [TeamProjectsController::class, 'store']);
+    Route::put('/{team_projects_id}', [TeamProjectsController::class, 'update']);
+    Route::delete('/{team_projects_id}', [TeamProjectsController::class, 'destroy']);
 });
