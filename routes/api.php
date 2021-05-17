@@ -58,9 +58,10 @@ Route::prefix('/project')->group(function() {
 });
 
 // Projects
-//Route::get('/boards', [BoardsController::class, 'index']);
+Route::get('/boards/{project_id}', [BoardsController::class, 'read_project_boards']);
 Route::prefix('/board')->group(function() {
     Route::post('/create_board', [BoardsController::class, 'create_board']);
-    //Route::put('/{project_id}', [BoardsController::class, 'update']);
-    //Route::delete('/{project_id}', [BoardsController::class, 'destroy']);
+    Route::put('/{board_id}', [BoardsController::class, 'update_board']);
+    // TODO
+    // Route::delete('/{project_id}', [BoardsController::class, 'destroy']);
 });

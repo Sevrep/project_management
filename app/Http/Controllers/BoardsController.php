@@ -18,54 +18,25 @@ class BoardsController extends Controller
         $newBoard->save();
         return $newBoard;
     }
-    // Export board details to csv
-    // Read board
-    // Read all boards
-    // Read all board details
+    // Read project boards
+    public function read_project_boards($project_id)
+    {
+        return Boards::orderBy('created_at', 'DESC')->where('project_id', $project_id)->get();
+    }
     // Update board
+    public function update_board(Request $request, $board_id)
+    {
+        $existingBoard = Boards::find($board_id);
+
+        if ($existingBoard) {
+            $existingBoard->board_name = $request->board['board_name'];
+            $existingBoard->save();
+            return $existingBoard;
+        }
+        return "Board not found.";
+    }
+    // TODO
     // Delete board
 
-    public function create_boards() {
-        $response = array();
-
-        if($_SERVER['REQUEST_METHOD'] == 'GET') {
-            
-            if(isset($_GET["board_name"]) && isset($_GET["board_author"])) {
-                
-                $board_name = $_GET['board_name'];
-                $board_author = $_GET['board_author'];
-
-                $data = array(
-                    'board_name' => $board_name,
-                    'board_author' => $board_author
-                );
-
-                $query = $this->db->insert('bukkawaste_kanban_board', $data);
-                
-                if($query) {
-                    
-                    $query1 = $this->db
-                        ->select('board_id')
-                        ->where('board_name', $board_name)
-                        ->where('board_author', $board_author)
-                        ->get('bukkawaste_kanban_board');
-                    
-                    foreach ($query1->result() as $key => $value) {
-                        $response['id'] = $value->board_id;
-                    }
-                    $response['message'] = "Board successfully added";
-                } else {
-                    $response['error'] = true;
-                    $response['message'] = "Board creation failed";
-                }
-            } else {
-                $response['error'] = true;
-                $response['message'] = "Invalid parameters";
-            }
-        } else {
-            $response['error'] = true;
-            $response['message'] = "Invalid request";
-        }
-        echo json_encode($response);
-    }
+    
 }
