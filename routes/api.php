@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\TeamMembersController;
 use App\Http\Controllers\TeamProjectsController;
+use App\Http\Controllers\ProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,4 +46,12 @@ Route::prefix('/team_project')->group(function() {
     Route::post('/store', [TeamProjectsController::class, 'store']);
     Route::put('/{team_projects_id}', [TeamProjectsController::class, 'update']);
     Route::delete('/{team_projects_id}', [TeamProjectsController::class, 'destroy']);
+});
+
+// Teams
+Route::get('/projects', [ProjectController::class, 'index']);
+Route::prefix('/project')->group(function() {
+    Route::post('/store', [ProjectController::class, 'store']);
+    Route::put('/{project_id}', [ProjectController::class, 'update']);
+    Route::delete('/{project_id}', [ProjectController::class, 'destroy']);
 });
