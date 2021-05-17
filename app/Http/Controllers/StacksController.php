@@ -42,7 +42,6 @@ class StacksController extends Controller
     public function update_stack(Request $request, $stack_id)
     {
         $existingStack = Stacks::find($stack_id);
-
         if ($existingStack) {
             $existingStack->stack_name = $request->stack['stack_name'];
             $existingStack->save();
