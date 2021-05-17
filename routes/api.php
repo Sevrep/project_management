@@ -68,7 +68,7 @@ Route::prefix('/board')->group(function() {
 });
 
 // Stacks
-// Route::get('/boards/{project_id}', [StacksController::class, 'read_project_boards']);
+Route::get('/stacks/{board_id}', [StacksController::class, 'read_board_stacks']);
 Route::prefix('/stack')->group(function() {
     Route::post('/create_stack', [StacksController::class, 'create_stack']);
     // Route::put('/{board_id}', [StacksController::class, 'update_board']);

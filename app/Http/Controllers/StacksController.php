@@ -18,6 +18,10 @@ class StacksController extends Controller
         return $newStack;
     }
     // Read stack
+    public function read_board_stacks($board_id)
+    {
+        return Stacks::orderBy('created_at', 'DESC')->where('board_id', $board_id)->get();
+    }
     // Read get done stacks
     // Update stack
 
