@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Stacks;
+use App\Models\Boards;
 
 use Illuminate\Http\Request;
 
@@ -22,7 +24,20 @@ class StacksController extends Controller
     {
         return Stacks::orderBy('created_at', 'DESC')->where('board_id', $board_id)->get();
     }
-    // Read get done stacks
+    // Read board done stacks
+    public function read_board_done_stacks()
+    {
+        $tempArray = array();
+        $done_stacks = Stacks::orderBy('created_at', 'DESC')->where('stack_name', 'DoneStacksReservedKeyword')->get();
+        foreach ($done_stacks as $stack) {
+            $newStack = new Stacks;
+            $newStack->stack_id = $stack->stack_id;
+            $newStack->board_id = $stack->board_id;
+            $newStack->board_name = Boards::select('board_name')->where('board_id', $stack->board_id)->get()[0]->board_name;
+            array_push($tempArray, $newStack);
+        }
+        return $tempArray;
+    }
     // Update stack
 
     // TODO
