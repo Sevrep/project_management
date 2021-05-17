@@ -34,6 +34,7 @@ class ProjectController extends Controller
         return "Project not found.";
     }
 
+    // TODO update this once all tables are created
     public function destroy($project_id)
     {
         $existingProject = Project::find($project_id);

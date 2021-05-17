@@ -7,6 +7,7 @@ use App\Http\Controllers\TeamMembersController;
 use App\Http\Controllers\TeamProjectsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BoardsController;
+use App\Http\Controllers\StacksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,11 +58,20 @@ Route::prefix('/project')->group(function() {
     Route::delete('/{project_id}', [ProjectController::class, 'destroy']);
 });
 
-// Projects
+// Boards
 Route::get('/boards/{project_id}', [BoardsController::class, 'read_project_boards']);
 Route::prefix('/board')->group(function() {
     Route::post('/create_board', [BoardsController::class, 'create_board']);
     Route::put('/{board_id}', [BoardsController::class, 'update_board']);
     // TODO
     // Route::delete('/{project_id}', [BoardsController::class, 'destroy']);
+});
+
+// Stacks
+// Route::get('/boards/{project_id}', [StacksController::class, 'read_project_boards']);
+Route::prefix('/stack')->group(function() {
+    Route::post('/create_stack', [StacksController::class, 'create_stack']);
+    // Route::put('/{board_id}', [StacksController::class, 'update_board']);
+    // TODO
+    // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
 });

@@ -35,6 +35,7 @@ class BoardsController extends Controller
         }
         return "Board not found.";
     }
+    
     // TODO
     // Delete board
 
