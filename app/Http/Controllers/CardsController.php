@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cards;
-
 use Illuminate\Http\Request;
-
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 class CardsController extends Controller
 {
@@ -52,7 +49,7 @@ class CardsController extends Controller
         <br><br>
         
         <h3>Bukkawaste,</h3>";
-        
+
         $mail = new PHPMailer();
 
         $mail->isSMTP();
@@ -100,7 +97,7 @@ class CardsController extends Controller
         <br><br>
         
         <h3 style='color:black'>Bukkawaste,</h3>";
-        
+
         $mail = new PHPMailer();
 
         $mail->isSMTP();
@@ -191,6 +188,76 @@ class CardsController extends Controller
         return $newCard;
     }
     // Read card
+    public function read_stack_cards($stack_id, $reader)
+    {
+        $tempArray = array();
+
+        $stackCards = Cards::orderBy('card_priority', 'ASC')->orderBy('updated_at', 'DESC')->where('stack_id', $stack_id)->get();
+        
+        $stackCardsCount = Cards::where('stack_id', $stack_id)->count();
+
+        if ($stackCardsCount > 0) {
+
+            foreach ($stackCards as $value) {
+
+                $card_id = $value->card_id;
+
+                // $get_card_files = $this->db
+                //     ->select('card_files.card_files_id')
+                //     ->from('card_files')
+                //     ->join('card', 'card.card_id = card_files.card_id', 'left')
+                //     ->join('stack', 'stack.stack_id = card.stack_id', 'left')
+                //     ->where('card_files.card_id', $card_id)
+                //     ->get();
+
+                // $get_card_notes = $this->db
+                //     ->select('notes_id')
+                //     ->from('notes')
+                //     ->where('card_id', $card_id)
+                //     ->get();
+
+                $tempVar = new Cards;
+                $tempVar->card_id = $value->card_id;
+                $tempVar->stack_id = $value->stack_id;
+                $tempVar->card_priority = $value->card_priority;
+                $tempVar->card_name = $value->card_name;
+                $tempVar->card_author = $value->card_author;
+                $tempVar->card_progress = $value->card_progress;
+                $tempVar->completed_at = $value->completed_at;
+                $tempVar->checked_by_developer = $value->checked_by_developer;
+                $tempVar->checked_by_outsourcer = $value->checked_by_outsourcer;
+                $tempVar->checked_by_client = $value->checked_by_client;
+                $tempVar->created_at = $value->created_at;
+                $tempVar->updated_at = $value->updated_at;
+
+                // $tempVar->card_files_total_count = $get_card_files->num_rows();
+                // $readFiles = 0;
+                // foreach ($get_card_files->result() as $value) {
+                //     $readFiles += $this->count_card_files_notification_read_by_user($reader, $value->card_files_id);
+                // }
+                // $tempVar->card_files_read_count = $readFiles;
+                // $tempVar->card_files_unread_count = $get_card_files->num_rows() - $readFiles;
+
+                // $tempVar->card_notes_count = $get_card_notes->num_rows();
+                // $readNotes = 0;
+                // foreach ($get_card_notes->result() as $value) {
+                //     $readNotes += $this->count_notes_notification_read_by_user($reader, $value->notes_id);
+                // }
+                // $tempVar->card_notes_read_count = $readNotes;
+                // $tempVar->card_notes_unread_count = $get_card_notes->num_rows() - $readNotes;
+
+                array_push($tempArray, $tempVar);
+            }
+            // if ($tempArray != NULL) {
+            //     $finalVar->data = $tempArray;
+            // }
+        } else {
+            // $finalVar->error = true;
+            // $finalVar->message = "No record found";
+        }
+
+        return $tempArray;
+    }
     // Read cards in done stack
     // Update card
     // Update card progress
