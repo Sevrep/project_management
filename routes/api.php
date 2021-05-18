@@ -8,6 +8,7 @@ use App\Http\Controllers\TeamProjectsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BoardsController;
 use App\Http\Controllers\StacksController;
+use App\Http\Controllers\CardsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +74,16 @@ Route::get('/read_board_done_stacks', [StacksController::class, 'read_board_done
 Route::prefix('/stack')->group(function() {
     Route::post('/create_stack', [StacksController::class, 'create_stack']);
     Route::put('/{stack_id}', [StacksController::class, 'update_stack']);
+    // TODO
+    // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
+});
+
+// Cards
+// Route::get('/cards/{stack_id}', [CardsController::class, 'read_board_stacks']);
+// Route::get('/read_board_done_stacks', [CardsController::class, 'read_board_done_stacks']);
+Route::prefix('/card')->group(function() {
+    Route::post('/create_card', [CardsController::class, 'create_card']);
+    // Route::put('/{stack_id}', [CardsController::class, 'update_stack']);
     // TODO
     // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
 });

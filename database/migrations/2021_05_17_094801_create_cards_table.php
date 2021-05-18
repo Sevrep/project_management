@@ -20,6 +20,10 @@ class CreateCardsTable extends Migration
             $table->string('card_name');
             $table->string('card_author');
             $table->integer('card_progress')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->boolean('checked_by_developer')->default(0)->nullable();
+            $table->boolean('checked_by_outsourcer')->default(0)->nullable();
+            $table->boolean('checked_by_client')->default(0)->nullable();
             $table->timestamps();
         });
     }

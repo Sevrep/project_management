@@ -7,6 +7,7 @@ use App\Models\Cards;
 use Illuminate\Http\Request;
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class CardsController extends Controller
 {
@@ -29,9 +30,12 @@ class CardsController extends Controller
         }
         return $priority;
     }
+    // TODO
     // Send mail
     private function send_mail($response_message, $id, $priority, $card_name, $stack_name, $board_name)
     {
+        require base_path("vendor/autoload.php");
+
         $response = array();
 
         $sender_name = 'bukkawaste_kanban';
@@ -39,8 +43,8 @@ class CardsController extends Controller
 
         $sender_email_username = "testernodemailertesteremail@gmail.com";
         $sender_email_password = '1Testernodemailertesteremail!';
-        $recipient_email = "aljonleynes11@gmail.com";
-        // $link =  '' . base_url() . '/admin/project_management/board/'.$board_id.'/'.$board_name;
+        // $recipient_email = "aljonleynes11@gmail.com";
+        $recipient_email = "ivanpetersemilla@gmail.com";
         $subject = "Bukkawaste Project Management";
         $body = "<h1>Urgent</h1> <br>
         <h3>
@@ -49,16 +53,7 @@ class CardsController extends Controller
         <br><br>
         
         <h3>Bukkawaste,</h3>";
-
-        // Hi,
-        // $user has set urgent priority to $cardtitle in $boardname
-        // Ahref papuntang board
-        // Joe,
-
-        require_once "PHPMailer/PHPMailer.php";
-        require_once "PHPMailer/SMTP.php";
-        require_once "PHPMailer/Exception.php";
-
+        
         $mail = new PHPMailer();
 
         $mail->isSMTP();
@@ -97,8 +92,8 @@ class CardsController extends Controller
 
         $sender_email_username = "testernodemailertesteremail@gmail.com";
         $sender_email_password = '1Testernodemailertesteremail!';
-        $recipient_email = "aljonleynes11@gmail.com";
-
+        // $recipient_email = "aljonleynes11@gmail.com";
+        $recipient_email = "ivanpetersemilla@gmail.com";
         $subject = "Bukkawaste Project Management";
         $body = "<h1>Urgent</h1> <br>
         <h3>
@@ -107,17 +102,7 @@ class CardsController extends Controller
         <br><br>
         
         <h3 style='color:black'>Bukkawaste,</h3>";
-        //need to get Id
-        // $link =  '' . base_url() . '/admin/project_management/board/'.$board_id.'/'.$board_name;
-        // Hi,
-        // $user has set urgent priority to $cardtitle in $boardname
-        // Ahref papuntang board
-        // Joe,
-
-        require_once "PHPMailer/PHPMailer.php";
-        require_once "PHPMailer/SMTP.php";
-        require_once "PHPMailer/Exception.php";
-
+        
         $mail = new PHPMailer();
 
         $mail->isSMTP();
@@ -148,10 +133,65 @@ class CardsController extends Controller
             $response['status'] = "Failed";
             $response['message'] = "Something is wrong: <br><br>" . $mail->ErrorInfo;
         }
-        // exit(json_encode($response));
     }
 
     // Create card
+    public function create_card(Request $request)
+    {
+        $response = array();
+
+        $stack_id = $request->card["stack_id"];
+        $card_priority = $this->setCardPriority($request->card["card_priority"]);
+        $card_name = $request->card["card_name"];
+        $card_author = $request->card["card_author"];
+        $card_progress = ($request->card["card_progress"]) ? $request->card["card_progress"] : 0;
+
+        $newCard = new Cards;
+        $newCard->stack_id = $stack_id;
+        $newCard->card_priority = $card_priority;
+        $newCard->card_name = $card_name;
+        $newCard->card_author = $card_author;
+        $newCard->card_progress = $card_progress;
+        $newCard->save();
+
+        if ($newCard->save()) {
+            $query1 = Cards::select('card_id', 'card_priority')
+                ->where('card_name', $card_name)
+                ->where('card_author', $card_author)
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            $id = 0;
+
+            foreach ($query1 as $key => $value) {
+                $id = intval($value->card_id);
+                $response['id'] = $value->card_id;
+                $response['priority'] = $value->card_priority;
+            }
+            if ($card_priority == 'A') {
+                $query2 = Cards::join('stacks', 'cards.stack_id', '=', 'stacks.stack_id')
+                    ->join('boards', 'stacks.board_id', '=', 'boards.board_id')
+                    ->where('cards.card_id', $id)
+                    ->get(["cards.card_name AS card_name", "stacks.stack_name AS stack_name", "boards.board_name AS board_name"]);
+
+                foreach ($query2 as $key => $value) {
+                    $response['card_name'] = $value->card_name;
+                    $response['stack_name'] = $value->stack_name;
+                    $response['board_name'] = $value->board_name;
+                }
+
+                $this->send_mail(
+                    "Card successfully created!",
+                    $response['id'],
+                    $response['priority'],
+                    $response['card_name'],
+                    $response['stack_name'],
+                    $response['board_name']
+                );
+            }
+        }
+        return $newCard;
+    }
     // Read card
     // Read cards in done stack
     // Update card
