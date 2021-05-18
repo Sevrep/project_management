@@ -43,8 +43,7 @@ class CardsController extends Controller
 
         $sender_email_username = "testernodemailertesteremail@gmail.com";
         $sender_email_password = '1Testernodemailertesteremail!';
-        // $recipient_email = "aljonleynes11@gmail.com";
-        $recipient_email = "ivanpetersemilla@gmail.com";
+        $recipient_email = "aljonleynes11@gmail.com";
         $subject = "Bukkawaste Project Management";
         $body = "<h1>Urgent</h1> <br>
         <h3>
@@ -92,8 +91,7 @@ class CardsController extends Controller
 
         $sender_email_username = "testernodemailertesteremail@gmail.com";
         $sender_email_password = '1Testernodemailertesteremail!';
-        // $recipient_email = "aljonleynes11@gmail.com";
-        $recipient_email = "ivanpetersemilla@gmail.com";
+        $recipient_email = "aljonleynes11@gmail.com";
         $subject = "Bukkawaste Project Management";
         $body = "<h1>Urgent</h1> <br>
         <h3>
