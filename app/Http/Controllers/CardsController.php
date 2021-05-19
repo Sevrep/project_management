@@ -219,6 +219,7 @@ class CardsController extends Controller
                 $tempVar = new Cards;
                 $tempVar->card_id = $value->card_id;
                 $tempVar->stack_id = $value->stack_id;
+                $tempVar->previous_stack_id = $value->previous_stack_id;
                 $tempVar->card_priority = $value->card_priority;
                 $tempVar->card_name = $value->card_name;
                 $tempVar->card_author = $value->card_author;
