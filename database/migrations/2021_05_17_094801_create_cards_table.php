@@ -16,6 +16,7 @@ class CreateCardsTable extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->id('card_id');
             $table->integer('stack_id');
+            $table->integer('previous_stack_id')->nullable();
             $table->char('card_priority', 1);
             $table->string('card_name');
             $table->string('card_author');
