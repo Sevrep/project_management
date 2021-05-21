@@ -84,6 +84,7 @@ Route::get('/read_done_cards/{reader}', [CardsController::class, 'read_done_card
 Route::prefix('/card')->group(function() {
     Route::post('/create_card', [CardsController::class, 'create_card']);
     Route::put('/{card_id}', [CardsController::class, 'update_card']);
+    Route::put('/{card_id}', [CardsController::class, 'update_card_progress']);
     // TODO
     // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
 });

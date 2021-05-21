@@ -393,7 +393,7 @@ class CardsController extends Controller
             $finalVar->error = true;
             $finalVar->message = "No record found";
         }
-        
+
         echo json_encode($finalVar);
     }
     // Update card
@@ -408,6 +408,16 @@ class CardsController extends Controller
         return "Card not found.";
     }
     // Update card progress
+    public function update_card_progress(Request $request, $card_id)
+    {
+        $existingCard = Cards::find($card_id);
+        if ($existingCard) {
+            $existingCard->card_progress = intval($request->card['card_progress']);
+            $existingCard->save();
+            return $existingCard;
+        }
+        return "Card not found.";
+    }
     // Update card title
     // Update card stack
     // Update card priority
