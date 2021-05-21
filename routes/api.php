@@ -80,7 +80,7 @@ Route::prefix('/stack')->group(function() {
 
 // Cards
 Route::get('/cards/{stack_id}/{reader}', [CardsController::class, 'read_stack_cards']);
-// Route::get('/read_board_done_stacks', [CardsController::class, 'read_board_done_stacks']);
+Route::get('/read_done_cards/{reader}', [CardsController::class, 'read_done_cards']);
 Route::prefix('/card')->group(function() {
     Route::post('/create_card', [CardsController::class, 'create_card']);
     // Route::put('/{stack_id}', [CardsController::class, 'update_stack']);
