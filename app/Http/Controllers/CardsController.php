@@ -252,7 +252,7 @@ class CardsController extends Controller
                 $tempVar->updated_at = $value->updated_at;
 
                 $tempVar->card_files_count = $count_card_files;
-                $readFiles = 1;
+                $readFiles = 0;
                 foreach ($card_card_files as $value) {
                     $readFiles += $this->count_notification_read_by_user('CardFileNotifications', 'card_file_notification_reader', $reader, 'card_file_id', $value->card_file_id);
                 }
@@ -260,7 +260,7 @@ class CardsController extends Controller
                 $tempVar->card_files_unread_count = $count_card_files - $readFiles;
 
                 $tempVar->card_notes_count = $count_card_notes;
-                $readNotes = 1;
+                $readNotes = 0;
                 foreach ($card_notes as $value) {
                     $readNotes += $this->count_notification_read_by_user('NoteNotifications', 'note_notification_reader',  $reader, 'note_id', $value->card_file_id);
                 }
@@ -337,7 +337,7 @@ class CardsController extends Controller
                     $tempVar->card_updated_at = $value->card_updated_at;
 
                     $tempVar->card_files_count = $count_card_files;
-                    $readCardFiles = 1;
+                    $readCardFiles = 0;
                     foreach ($card_card_files as $value) {
                         $readCardFiles += $this->count_notification_read_by_user('CardFileNotifications', 'card_file_notification_reader', $reader, 'card_file_id', $value->card_file_id);
                     }
@@ -345,7 +345,7 @@ class CardsController extends Controller
                     $tempVar->card_files_unread_count = $count_card_files - $readCardFiles;
 
                     $tempVar->count_card_notes = $count_card_notes;
-                    $readNotes = 2;
+                    $readNotes = 0;
                     foreach ($card_notes as $value) {
                         $readNotes += $this->count_notification_read_by_user('NoteNotifications', 'note_notification_reader',  $reader, 'note_id', $value->note_id);
                     }
@@ -353,7 +353,7 @@ class CardsController extends Controller
                     $tempVar->card_notes_unread_count = $count_card_notes - $readNotes;
 
                     $tempVar->card_notes_files_count = $count_notes_files;
-                    $readNotesFiles = 3;
+                    $readNotesFiles = 0;
                     foreach ($get_notes_files as $value) {
                         $readNotesFiles += $this->count_notification_read_by_user('NoteFileNotifications', 'note_file_notification_reader', $reader, 'note_file_id', $value->note_file_id);
                     }
@@ -397,6 +397,16 @@ class CardsController extends Controller
         echo json_encode($finalVar);
     }
     // Update card
+    public function update_card(Request $request, $card_id)
+    {
+        $existingCard = Cards::find($card_id);
+        if ($existingCard) {
+            $existingCard->card_name = $request->card['card_name'];
+            $existingCard->save();
+            return $existingCard;
+        }
+        return "Card not found.";
+    }
     // Update card progress
     // Update card title
     // Update card stack

@@ -83,7 +83,7 @@ Route::get('/cards/{stack_id}/{reader}', [CardsController::class, 'read_stack_ca
 Route::get('/read_done_cards/{reader}', [CardsController::class, 'read_done_cards']);
 Route::prefix('/card')->group(function() {
     Route::post('/create_card', [CardsController::class, 'create_card']);
-    // Route::put('/{stack_id}', [CardsController::class, 'update_stack']);
+    Route::put('/{card_id}', [CardsController::class, 'update_card']);
     // TODO
     // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
 });
