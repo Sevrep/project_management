@@ -10,6 +10,7 @@ use App\Models\Notes;
 use App\Models\NoteFiles;
 use App\Models\NoteNotifications;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class CardsController extends Controller
@@ -418,8 +419,35 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    // Update card title
     // Update card stack
+    public function update_card_stack(Request $request, $card_id)
+    {
+        $stack_id = $request->card['stack_id'];
+
+        $currentStackId = Cards::where('card_id', $card_id)->value('stack_id');
+        $stackName = Stacks::where('stack_id', $stack_id)->value('stack_name');
+
+        $existingCard = Cards::find($card_id);
+        if ($existingCard) {
+
+            if ($stackName == "DoneStacksReservedKeyword") {
+                $existingCard->stack_id = $stack_id;
+                $existingCard->previous_stack_id = $currentStackId;
+                $existingCard->card_progress = 100;
+                $existingCard->completed_at = Carbon::now();
+                $existingCard->checked_by_developer = true;
+                $existingCard->checked_by_outsourcer = true;
+                $existingCard->checked_by_client = true;
+            } else {
+                $existingCard->stack_id = intval($request->card['stack_id']);
+                $existingCard->previous_stack_id = NULL;
+            }
+
+            $existingCard->save();
+            return $existingCard;
+        }
+        return "Card not found.";
+    }
     // Update card priority
 
     // TODO
