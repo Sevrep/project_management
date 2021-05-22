@@ -448,7 +448,27 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
+    // Update card stack by
+    public function update_card_stack_by(Request $request, $signed_in_user)
+    {
+        $card_id = $request->card['card_id'];
+        $checked = $request->card['checked'];
+
+        $checked_by = "checked_by_" . $signed_in_user;
+        $existingCard = Cards::find($card_id);
+
+        if ($existingCard) {
+            $existingCard->card_progress = $checked ? 100 : 0;
+            $existingCard->completed_at = $checked ? Carbon::now() : NULL;
+            $existingCard->$checked_by = $checked;
+            $existingCard->save();
+
+            return $existingCard;
+        }
+        return "Card not found.";
+    }
     // Update card priority
+
 
     // TODO
     // Delete card
