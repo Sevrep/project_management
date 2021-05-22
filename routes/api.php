@@ -85,6 +85,7 @@ Route::prefix('/card')->group(function() {
     Route::post('/create_card', [CardsController::class, 'create_card']);
     Route::put('/{card_id}', [CardsController::class, 'update_card']);
     Route::put('/update_card_progress/{card_id}', [CardsController::class, 'update_card_progress']);
+    Route::put('/update_card_priority/{card_id}', [CardsController::class, 'update_card_priority']);
     Route::put('/update_card_stack/{card_id}', [CardsController::class, 'update_card_stack']);
     Route::put('/update_card_stack_by/{signed_in_user}', [CardsController::class, 'update_card_stack_by']);
     // TODO

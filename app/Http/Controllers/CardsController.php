@@ -15,7 +15,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 class CardsController extends Controller
 {
-    // Set card priority
     private function setCardPriority($param)
     {
         switch ($param) {
@@ -34,13 +33,41 @@ class CardsController extends Controller
         }
         return $priority;
     }
+    private function checkCardPriority($card_id)
+    {
+        $response = array();
+        $response['id'] = Cards::where('card_id', $card_id)->value('card_id');
+        $response['priority'] = Cards::where('card_id', $card_id)->value('card_priority');
+
+        $id = 0;
+        if ($response['priority'] == 'A') {
+            $query = Cards::join('stacks', 'cards.stack_id', '=', 'stacks.stack_id')
+                ->join('boards', 'stacks.board_id', '=', 'boards.board_id')
+                ->where('cards.card_id', $id)
+                ->get(["cards.card_name AS card_name", "stacks.stack_name AS stack_name", "boards.board_name AS board_name"]);
+
+            foreach ($query as $value) {
+                $response['card_name'] = $value->card_name;
+                $response['stack_name'] = $value->stack_name;
+                $response['board_name'] = $value->board_name;
+            }
+
+            $this->sendMail("Card successfully created!", $response);
+        }
+    }
     // TODO
     // Send mail
-    private function send_mail($response_message, $id, $priority, $card_name, $stack_name, $board_name)
+    private function sendMail($response_message, $mail_data)
     {
         require base_path("vendor/autoload.php");
 
         $response = array();
+
+        $id = $mail_data['id'];
+        $priority = $mail_data['id'];
+        $card_name = $mail_data['card_name'];
+        $stack_name = $mail_data['stack_name'];
+        $board_name = $mail_data['board_name'];
 
         $sender_name = 'bukkawaste_kanban';
         $sender_email = "testernodemailertesteremail@gmail.com";
@@ -137,7 +164,7 @@ class CardsController extends Controller
         }
     }
 
-    private function sortByDateDesc($array, $column)
+    private function sortColumnDesc($array, $column)
     {
         $collection = collect($array);
         $sorted = $collection->sortBy([[$column, 'desc']]);
@@ -156,17 +183,14 @@ class CardsController extends Controller
         return $count_card_files;
     }
 
-    private function count_notification_read_by_user($table, $column_reader, $reader, $where_id, $id)
+    private function countNotificationRead($table, $column_reader, $reader, $where_id, $id)
     {
         $count = $table::where($column_reader, $reader)->where($where_id, $id)->count();
         return $count;
     }
 
-    // Create card
     public function create_card(Request $request)
     {
-        $response = array();
-
         $stack_id = $request->card["stack_id"];
         $card_priority = $this->setCardPriority($request->card["card_priority"]);
         $card_name = $request->card["card_name"];
@@ -182,44 +206,11 @@ class CardsController extends Controller
         $newCard->save();
 
         if ($newCard->save()) {
-            $query1 = Cards::select('card_id', 'card_priority')
-                ->where('card_name', $card_name)
-                ->where('card_author', $card_author)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $id = 0;
-
-            foreach ($query1 as $key => $value) {
-                $id = intval($value->card_id);
-                $response['id'] = $value->card_id;
-                $response['priority'] = $value->card_priority;
-            }
-            if ($card_priority == 'A') {
-                $query2 = Cards::join('stacks', 'cards.stack_id', '=', 'stacks.stack_id')
-                    ->join('boards', 'stacks.board_id', '=', 'boards.board_id')
-                    ->where('cards.card_id', $id)
-                    ->get(["cards.card_name AS card_name", "stacks.stack_name AS stack_name", "boards.board_name AS board_name"]);
-
-                foreach ($query2 as $key => $value) {
-                    $response['card_name'] = $value->card_name;
-                    $response['stack_name'] = $value->stack_name;
-                    $response['board_name'] = $value->board_name;
-                }
-
-                $this->send_mail(
-                    "Card successfully created!",
-                    $response['id'],
-                    $response['priority'],
-                    $response['card_name'],
-                    $response['stack_name'],
-                    $response['board_name']
-                );
-            }
+            $this->checkCardPriority($newCard->card_id);
         }
         return $newCard;
     }
-    // Read card
+    
     public function read_stack_cards($stack_id, $reader)
     {
         $tempArray = array();
@@ -255,7 +246,7 @@ class CardsController extends Controller
                 $tempVar->card_files_count = $count_card_files;
                 $readFiles = 0;
                 foreach ($card_card_files as $value) {
-                    $readFiles += $this->count_notification_read_by_user('CardFileNotifications', 'card_file_notification_reader', $reader, 'card_file_id', $value->card_file_id);
+                    $readFiles += $this->countNotificationRead('CardFileNotifications', 'card_file_notification_reader', $reader, 'card_file_id', $value->card_file_id);
                 }
                 $tempVar->card_files_read_count = $readFiles;
                 $tempVar->card_files_unread_count = $count_card_files - $readFiles;
@@ -263,7 +254,7 @@ class CardsController extends Controller
                 $tempVar->card_notes_count = $count_card_notes;
                 $readNotes = 0;
                 foreach ($card_notes as $value) {
-                    $readNotes += $this->count_notification_read_by_user('NoteNotifications', 'note_notification_reader',  $reader, 'note_id', $value->card_file_id);
+                    $readNotes += $this->countNotificationRead('NoteNotifications', 'note_notification_reader',  $reader, 'note_id', $value->card_file_id);
                 }
                 $tempVar->card_notes_read_count = $readNotes;
                 $tempVar->card_notes_unread_count = $count_card_notes - $readNotes;
@@ -278,7 +269,7 @@ class CardsController extends Controller
 
         return $finalVar;
     }
-    // Read cards in done stack
+    
     public function read_done_cards($reader)
     {
 
@@ -340,7 +331,7 @@ class CardsController extends Controller
                     $tempVar->card_files_count = $count_card_files;
                     $readCardFiles = 0;
                     foreach ($card_card_files as $value) {
-                        $readCardFiles += $this->count_notification_read_by_user('CardFileNotifications', 'card_file_notification_reader', $reader, 'card_file_id', $value->card_file_id);
+                        $readCardFiles += $this->countNotificationRead('CardFileNotifications', 'card_file_notification_reader', $reader, 'card_file_id', $value->card_file_id);
                     }
                     $tempVar->card_files_read_count = $readCardFiles;
                     $tempVar->card_files_unread_count = $count_card_files - $readCardFiles;
@@ -348,7 +339,7 @@ class CardsController extends Controller
                     $tempVar->count_card_notes = $count_card_notes;
                     $readNotes = 0;
                     foreach ($card_notes as $value) {
-                        $readNotes += $this->count_notification_read_by_user('NoteNotifications', 'note_notification_reader',  $reader, 'note_id', $value->note_id);
+                        $readNotes += $this->countNotificationRead('NoteNotifications', 'note_notification_reader',  $reader, 'note_id', $value->note_id);
                     }
                     $tempVar->card_notes_read_count = $readNotes;
                     $tempVar->card_notes_unread_count = $count_card_notes - $readNotes;
@@ -356,13 +347,13 @@ class CardsController extends Controller
                     $tempVar->card_notes_files_count = $count_notes_files;
                     $readNotesFiles = 0;
                     foreach ($get_notes_files as $value) {
-                        $readNotesFiles += $this->count_notification_read_by_user('NoteFileNotifications', 'note_file_notification_reader', $reader, 'note_file_id', $value->note_file_id);
+                        $readNotesFiles += $this->countNotificationRead('NoteFileNotifications', 'note_file_notification_reader', $reader, 'note_file_id', $value->note_file_id);
                     }
                     $tempVar->card_notes_files_read_count = $readNotesFiles;
                     $tempVar->card_notes_files_unread_count = $count_notes_files - $readNotesFiles;
 
                     array_push($done_cards, $tempVar);
-                    $done_cards = $this->sortByDateDesc($done_cards, 'card_updated_at');
+                    $done_cards = $this->sortColumnDesc($done_cards, 'card_updated_at');
 
                     $countCardFiles += $count_card_files;
                     $countReadFiles += $readCardFiles;
@@ -397,7 +388,7 @@ class CardsController extends Controller
 
         echo json_encode($finalVar);
     }
-    // Update card
+    
     public function update_card(Request $request, $card_id)
     {
         $existingCard = Cards::find($card_id);
@@ -408,7 +399,7 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    // Update card progress
+    
     public function update_card_progress(Request $request, $card_id)
     {
         $existingCard = Cards::find($card_id);
@@ -419,7 +410,22 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    // Update card stack
+    
+    public function update_card_priority(Request $request, $card_id)
+    {
+        $existingCard = Cards::find($card_id);
+        if ($existingCard) {
+            $existingCard->card_priority = $this->setCardPriority($request->card['card_priority']);
+            $existingCard->save();
+
+            if ($existingCard->save()) {
+                $this->checkCardPriority($existingCard->card_priority);
+            }
+            return $existingCard;
+        }
+        return "Card not found.";
+    }
+    
     public function update_card_stack(Request $request, $card_id)
     {
         $stack_id = $request->card['stack_id'];
@@ -448,7 +454,7 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    // Update card stack by
+    
     public function update_card_stack_by(Request $request, $signed_in_user)
     {
         $card_id = $request->card['card_id'];
@@ -467,8 +473,6 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    // Update card priority
-
 
     // TODO
     // Delete card
