@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BoardsController;
 use App\Http\Controllers\StacksController;
 use App\Http\Controllers\CardsController;
+use App\Http\Controllers\CardFilesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,3 +92,6 @@ Route::prefix('/card')->group(function() {
     // TODO
     // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
 });
+
+// Card Files
+Route::post('/upload_card_file/{card_id}/{reader}', [CardFilesController::class, 'upload_card_file']);

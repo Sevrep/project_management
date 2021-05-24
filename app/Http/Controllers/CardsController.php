@@ -36,15 +36,12 @@ class CardsController extends Controller
     private function checkCardPriority($card_id)
     {
         $response = array();
+        
         $response['id'] = Cards::where('card_id', $card_id)->value('card_id');
         $response['priority'] = Cards::where('card_id', $card_id)->value('card_priority');
 
-        $id = 0;
         if ($response['priority'] == 'A') {
-            $query = Cards::join('stacks', 'cards.stack_id', '=', 'stacks.stack_id')
-                ->join('boards', 'stacks.board_id', '=', 'boards.board_id')
-                ->where('cards.card_id', $id)
-                ->get(["cards.card_name AS card_name", "stacks.stack_name AS stack_name", "boards.board_name AS board_name"]);
+            $query = Cards::leftJoin('stacks', 'cards.stack_id', '=', 'stacks.stack_id')->leftJoin('boards', 'stacks.board_id', '=', 'boards.board_id')->where('cards.card_id', $card_id)->get(["cards.card_name AS card_name", "stacks.stack_name AS stack_name", "boards.board_name AS board_name"]);
 
             foreach ($query as $value) {
                 $response['card_name'] = $value->card_name;
@@ -210,7 +207,7 @@ class CardsController extends Controller
         }
         return $newCard;
     }
-    
+
     public function read_stack_cards($stack_id, $reader)
     {
         $tempArray = array();
@@ -269,7 +266,7 @@ class CardsController extends Controller
 
         return $finalVar;
     }
-    
+
     public function read_done_cards($reader)
     {
 
@@ -388,7 +385,7 @@ class CardsController extends Controller
 
         echo json_encode($finalVar);
     }
-    
+
     public function update_card(Request $request, $card_id)
     {
         $existingCard = Cards::find($card_id);
@@ -399,7 +396,7 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    
+
     public function update_card_progress(Request $request, $card_id)
     {
         $existingCard = Cards::find($card_id);
@@ -410,7 +407,7 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    
+
     public function update_card_priority(Request $request, $card_id)
     {
         $existingCard = Cards::find($card_id);
@@ -425,7 +422,7 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    
+
     public function update_card_stack(Request $request, $card_id)
     {
         $stack_id = $request->card['stack_id'];
@@ -454,7 +451,7 @@ class CardsController extends Controller
         }
         return "Card not found.";
     }
-    
+
     public function update_card_stack_by(Request $request, $signed_in_user)
     {
         $card_id = $request->card['card_id'];
