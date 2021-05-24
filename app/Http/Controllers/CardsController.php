@@ -36,7 +36,7 @@ class CardsController extends Controller
     private function checkCardPriority($card_id)
     {
         $response = array();
-        
+
         $response['id'] = Cards::where('card_id', $card_id)->value('card_id');
         $response['priority'] = Cards::where('card_id', $card_id)->value('card_priority');
 
