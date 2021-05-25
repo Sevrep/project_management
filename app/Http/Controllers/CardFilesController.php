@@ -48,7 +48,6 @@ class CardFilesController extends Controller
         return $CardFile;
     }
 
-    // Read card_files
     public function read_card_files($card_id, $reader)
     {
         $tempArray = array();
@@ -69,7 +68,7 @@ class CardFilesController extends Controller
             foreach ($card_files as $value) {
                 $card_file_id = $value->card_file_id;
                 if (!in_array($card_file_id, $readNotificationIds)) {
-                    $this->createCardFileNotification($value->card_file_id, $reader);
+                    $this->createCardFileNotification($card_file_id, $reader);
                 }
                 $readFiles += CardFileNotifications::where('card_file_notification_reader', $reader)->where('card_file_id', $card_file_id)->count();
                 array_push($tempArray, $value);
@@ -89,6 +88,16 @@ class CardFilesController extends Controller
         echo json_encode($finalVar);
     }
     // Update card file title
+    public function update_card_file_title(Request $request, $card_file_id)
+    {
+        $existingCardFile = CardFiles::find($card_file_id);
+        if ($existingCardFile) {
+            $existingCardFile->card_file_title = $request->card_file['card_file_title'];
+            $existingCardFile->save();
+            return $existingCardFile;
+        }
+        return "Card file not found.";
+    }
     // Update card_files
     
 }

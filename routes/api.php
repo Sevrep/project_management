@@ -96,3 +96,4 @@ Route::prefix('/card')->group(function() {
 // Card Files
 Route::get('/read_card_files/{card_id}/{reader}', [CardFilesController::class, 'read_card_files']);
 Route::post('/upload_card_file/{card_id}/{reader}', [CardFilesController::class, 'upload_card_file']);
+Route::put('/update_card_file_title/{card_file_id}', [CardFilesController::class, 'update_card_file_title']);
