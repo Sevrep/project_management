@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cards;
 use App\Models\CardFiles;
 use App\Models\CardFileNotifications;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class CardFilesController extends Controller
 {
@@ -87,7 +85,7 @@ class CardFilesController extends Controller
 
         echo json_encode($finalVar);
     }
-    // Update card file title
+
     public function update_card_file_title(Request $request, $card_file_id)
     {
         $existingCardFile = CardFiles::find($card_file_id);
@@ -98,6 +96,4 @@ class CardFilesController extends Controller
         }
         return "Card file not found.";
     }
-    // Update card_files
-    
 }

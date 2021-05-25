@@ -10,6 +10,7 @@ use App\Http\Controllers\BoardsController;
 use App\Http\Controllers\StacksController;
 use App\Http\Controllers\CardsController;
 use App\Http\Controllers\CardFilesController;
+use App\Http\Controllers\NotesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,3 +98,11 @@ Route::prefix('/card')->group(function() {
 Route::get('/read_card_files/{card_id}/{reader}', [CardFilesController::class, 'read_card_files']);
 Route::post('/upload_card_file/{card_id}/{reader}', [CardFilesController::class, 'upload_card_file']);
 Route::put('/update_card_file_title/{card_file_id}', [CardFilesController::class, 'update_card_file_title']);
+
+// Notes
+// Route::get('/teams', [TeamsController::class, 'index']);
+Route::prefix('/note')->group(function() {
+    Route::post('/create_note', [NotesController::class, 'create_note']);
+    // Route::put('/{teams_id}', [TeamsController::class, 'update']);
+    // Route::delete('/{teams_id}', [TeamsController::class, 'destroy']);
+});
