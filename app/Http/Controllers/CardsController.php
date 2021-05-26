@@ -383,7 +383,7 @@ class CardsController extends Controller
             $finalVar->message = "No record found";
         }
 
-        echo json_encode($finalVar);
+        return $finalVar;
     }
 
     public function update_card(Request $request, $card_id)

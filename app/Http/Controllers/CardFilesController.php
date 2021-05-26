@@ -83,7 +83,7 @@ class CardFilesController extends Controller
             $finalVar->message = "No record found";
         }
 
-        echo json_encode($finalVar);
+        return $finalVar;
     }
 
     public function update_card_file_title(Request $request, $card_file_id)

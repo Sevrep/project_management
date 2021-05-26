@@ -100,7 +100,7 @@ Route::post('/upload_card_file/{card_id}/{reader}', [CardFilesController::class,
 Route::put('/update_card_file_title/{card_file_id}', [CardFilesController::class, 'update_card_file_title']);
 
 // Notes
-// Route::get('/teams', [TeamsController::class, 'index']);
+Route::get('/notes/{card_id}/{reader}', [NotesController::class, 'read_card_notes']);
 Route::prefix('/note')->group(function() {
     Route::post('/create_note', [NotesController::class, 'create_note']);
     // Route::put('/{teams_id}', [TeamsController::class, 'update']);
