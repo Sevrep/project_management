@@ -101,6 +101,7 @@ Route::put('/update_card_file_title/{card_file_id}', [CardFilesController::class
 
 // Notes
 Route::get('/notes/{card_id}/{reader}', [NotesController::class, 'read_card_notes']);
+Route::get('/notes/read_all_ui_notes', [NotesController::class, 'read_all_ui_notes']);
 Route::prefix('/note')->group(function() {
     Route::post('/create_note', [NotesController::class, 'create_note']);
     // Route::put('/{teams_id}', [TeamsController::class, 'update']);
