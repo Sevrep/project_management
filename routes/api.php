@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // PUBLIC ROUTES
 // Teams
 Route::get('/teams', [TeamsController::class, 'index']);
-Route::prefix('/team')->group(function() {
+Route::prefix('/team')->group(function () {
     Route::post('/store', [TeamsController::class, 'store']);
     Route::put('/{teams_id}', [TeamsController::class, 'update']);
     Route::delete('/{teams_id}', [TeamsController::class, 'destroy']);
@@ -39,7 +39,7 @@ Route::prefix('/team')->group(function() {
 
 // Team members
 Route::get('/team_members', [TeamMembersController::class, 'index']);
-Route::prefix('/team_member')->group(function() {
+Route::prefix('/team_member')->group(function () {
     Route::post('/store', [TeamMembersController::class, 'store']);
     Route::put('/{team_members_id}', [TeamMembersController::class, 'update']);
     Route::delete('/{team_members_id}', [TeamMembersController::class, 'destroy']);
@@ -47,7 +47,7 @@ Route::prefix('/team_member')->group(function() {
 
 // Team projects
 Route::get('/team_projects', [TeamProjectsController::class, 'index']);
-Route::prefix('/team_project')->group(function() {
+Route::prefix('/team_project')->group(function () {
     Route::post('/store', [TeamProjectsController::class, 'store']);
     Route::put('/{team_projects_id}', [TeamProjectsController::class, 'update']);
     Route::delete('/{team_projects_id}', [TeamProjectsController::class, 'destroy']);
@@ -55,7 +55,7 @@ Route::prefix('/team_project')->group(function() {
 
 // Projects
 Route::get('/projects', [ProjectController::class, 'index']);
-Route::prefix('/project')->group(function() {
+Route::prefix('/project')->group(function () {
     Route::post('/store', [ProjectController::class, 'store']);
     Route::put('/{project_id}', [ProjectController::class, 'update']);
     Route::delete('/{project_id}', [ProjectController::class, 'destroy']);
@@ -63,7 +63,7 @@ Route::prefix('/project')->group(function() {
 
 // Boards
 Route::get('/boards/{project_id}', [BoardsController::class, 'read_project_boards']);
-Route::prefix('/board')->group(function() {
+Route::prefix('/board')->group(function () {
     Route::post('/create_board', [BoardsController::class, 'create_board']);
     Route::put('/{board_id}', [BoardsController::class, 'update_board']);
     // TODO
@@ -73,7 +73,7 @@ Route::prefix('/board')->group(function() {
 // Stacks
 Route::get('/stacks/{board_id}', [StacksController::class, 'read_board_stacks']);
 Route::get('/read_board_done_stacks', [StacksController::class, 'read_board_done_stacks']);
-Route::prefix('/stack')->group(function() {
+Route::prefix('/stack')->group(function () {
     Route::post('/create_stack', [StacksController::class, 'create_stack']);
     Route::put('/{stack_id}', [StacksController::class, 'update_stack']);
     // TODO
@@ -83,7 +83,7 @@ Route::prefix('/stack')->group(function() {
 // Cards
 Route::get('/cards/{stack_id}/{reader}', [CardsController::class, 'read_stack_cards']);
 Route::get('/read_done_cards/{reader}', [CardsController::class, 'read_done_cards']);
-Route::prefix('/card')->group(function() {
+Route::prefix('/card')->group(function () {
     Route::post('/create_card', [CardsController::class, 'create_card']);
     Route::put('/{card_id}', [CardsController::class, 'update_card']);
     Route::put('/update_card_progress/{card_id}', [CardsController::class, 'update_card_progress']);
@@ -100,9 +100,12 @@ Route::post('/upload_card_file/{card_id}/{reader}', [CardFilesController::class,
 Route::put('/update_card_file_title/{card_file_id}', [CardFilesController::class, 'update_card_file_title']);
 
 // Notes
-Route::get('/notes/{card_id}/{reader}', [NotesController::class, 'read_card_notes']);
-Route::get('/notes/read_all_ui_notes', [NotesController::class, 'read_all_ui_notes']);
-Route::prefix('/note')->group(function() {
+Route::prefix('/notes')->group(function () {
+    Route::get('/{card_id}/{reader}', [NotesController::class, 'read_card_notes']);
+    Route::get('/read_all_ui_notes', [NotesController::class, 'read_all_ui_notes']);
+    Route::get('/read_all_feedback_notes', [NotesController::class, 'read_all_feedback_notes']);
+});
+Route::prefix('/note')->group(function () {
     Route::post('/create_note', [NotesController::class, 'create_note']);
     // Route::put('/{teams_id}', [TeamsController::class, 'update']);
     // Route::delete('/{teams_id}', [TeamsController::class, 'destroy']);

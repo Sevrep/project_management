@@ -120,77 +120,142 @@ class NotesController extends Controller
         $tempArray = array();
         $finalVar = new Notes;
 
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
+            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
+            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
+            ->where('notes.ui_requirements', '>', '0')
+            ->orderBy('notes.updated_at', 'DESC')
+            ->get();
+        $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
+            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
+            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
+            ->where('notes.ui_requirements', '>', '0')
+            ->orderBy('notes.updated_at', 'DESC')
+            ->count();
 
-            // $query = Notes::select('notes.*, cards.*, stacks.*, boards.*, stacks.stack_id')
-            $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
-                ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
-                ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
-                ->where('notes.ui_requirements', '>', '0')
-                ->orderBy('notes.updated_at', 'DESC')
-                ->get();
-            $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
-                ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
-                ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
-                ->where('notes.ui_requirements', '>', '0')
-                ->orderBy('notes.updated_at', 'DESC')
-                ->count();
+        if ($count_note_uis > 0) {
+            foreach ($note_uis as $value) {
+                $tempVar = new Notes;
+                $tempVar->note_id = $value->note_id;
+                $tempVar->card_id = $value->card_id;
+                $tempVar->note_content = $value->note_content;
+                $tempVar->ui_requirements = $value->ui_requirements;
+                $tempVar->feedback = $value->feedback;
+                $tempVar->created_at = $value->created_at;
+                $tempVar->updated_at = $value->updated_at;
+                $tempVar->stack_id = $value->stack_id;
+                $tempVar->previous_stack_id = $value->previous_stack_id;
+                $tempVar->card_priority = $value->card_priority;
+                $tempVar->card_name = $value->card_name;
+                $tempVar->card_author = $value->card_author;
+                $tempVar->card_progress = $value->card_progress;
+                $tempVar->completed_at = $value->completed_at;
+                $tempVar->checked_by_developer = $value->checked_by_developer;
+                $tempVar->checked_by_outsourcer = $value->checked_by_outsourcer;
+                $tempVar->checked_by_client = $value->checked_by_client;
+                $tempVar->card_created_at = $value->created_at;
+                $tempVar->card_updated_at = $value->updated_at;
+                $tempVar->board_id = $value->board_id;
+                $tempVar->stack_name = $value->stack_name;
+                $tempVar->stack_author = $value->stack_author;
+                $tempVar->stack_created_at = $value->created_at;
+                $tempVar->stack_updated_at = $value->updated_at;
+                $tempVar->board_name = $value->board_name;
+                $tempVar->board_author = $value->board_author;
+                $tempVar->board_created_at = $value->created_at;
+                $tempVar->board_updated_at = $value->updated_at;
 
-            if ($count_note_uis > 0) {
-                foreach ($note_uis as $value) {
-                    $tempVar = new Notes;
-                    $tempVar->note_id = $value->note_id;
-                    $tempVar->card_id = $value->card_id;
-                    $tempVar->note_content = $value->note_content;
-                    $tempVar->ui_requirements = $value->ui_requirements;
-                    $tempVar->feedback = $value->feedback;
-                    $tempVar->created_at = $value->created_at;
-                    $tempVar->updated_at = $value->updated_at;
-                    $tempVar->stack_id = $value->stack_id;
-                    $tempVar->previous_stack_id = $value->previous_stack_id;
-                    $tempVar->card_priority = $value->card_priority;
-                    $tempVar->card_name = $value->card_name;
-                    $tempVar->card_author = $value->card_author;
-                    $tempVar->card_progress = $value->card_progress;
-                    $tempVar->completed_at = $value->completed_at;
-                    $tempVar->checked_by_developer = $value->checked_by_developer;
-                    $tempVar->checked_by_outsourcer = $value->checked_by_outsourcer;
-                    $tempVar->checked_by_client = $value->checked_by_client;
-                    $tempVar->card_created_at = $value->created_at;
-                    $tempVar->card_updated_at = $value->updated_at;
-                    $tempVar->board_id = $value->board_id;
-                    $tempVar->stack_name = $value->stack_name;
-                    $tempVar->stack_author = $value->stack_author;
-                    $tempVar->stack_created_at = $value->created_at;
-                    $tempVar->stack_updated_at = $value->updated_at;
-                    $tempVar->board_name = $value->board_name;
-                    $tempVar->board_author = $value->board_author;
-                    $tempVar->board_created_at = $value->created_at;
-                    $tempVar->board_updated_at = $value->updated_at;
+                $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')
+                    ->where('stack_name', 'DoneStacksReservedKeyword')
+                    ->where('board_id', $value->board_id)
+                    ->get();
 
-                    $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')
-                        ->where('stack_name', 'DoneStacksReservedKeyword')
-                        ->where('board_id', $value->board_id)
-                        ->get();
-
-                    foreach ($done_stack_id_name as $value) {
-                        $tempVar->done_stack_id = $value->stack_id;
-                        $tempVar->done_stack_name = $value->stack_name;
-                    }
-
-                    array_push($tempArray, $tempVar);
+                foreach ($done_stack_id_name as $value) {
+                    $tempVar->done_stack_id = $value->stack_id;
+                    $tempVar->done_stack_name = $value->stack_name;
                 }
-                $finalVar->data = $tempArray;
-            } else {
-                $finalVar->error = true;
-                $finalVar->message = "No record found";
+
+                array_push($tempArray, $tempVar);
             }
+            $finalVar->data = $tempArray;
         } else {
-            $finalVar->message = "Invalid request";
+            $finalVar->error = true;
+            $finalVar->message = "No record found";
         }
+
         return $finalVar;
     }
     // Read feedback notes
+    public function read_all_feedback_notes()
+    {
+        $tempArray = array();
+        $finalVar = new Notes;
+
+        $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
+            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
+            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
+            ->where('notes.feedback', '>', '0')
+            ->orderBy('notes.updated_at', 'DESC')
+            ->get();
+        $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
+            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
+            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
+            ->where('notes.feedback', '>', '0')
+            ->orderBy('notes.updated_at', 'DESC')
+            ->count();
+
+        if ($count_note_uis > 0) {
+            foreach ($note_uis as $value) {
+                $tempVar = new Notes;
+                $tempVar->note_id = $value->note_id;
+                $tempVar->card_id = $value->card_id;
+                $tempVar->note_content = $value->note_content;
+                $tempVar->ui_requirements = $value->ui_requirements;
+                $tempVar->feedback = $value->feedback;
+                $tempVar->created_at = $value->created_at;
+                $tempVar->updated_at = $value->updated_at;
+                $tempVar->stack_id = $value->stack_id;
+                $tempVar->previous_stack_id = $value->previous_stack_id;
+                $tempVar->card_priority = $value->card_priority;
+                $tempVar->card_name = $value->card_name;
+                $tempVar->card_author = $value->card_author;
+                $tempVar->card_progress = $value->card_progress;
+                $tempVar->completed_at = $value->completed_at;
+                $tempVar->checked_by_developer = $value->checked_by_developer;
+                $tempVar->checked_by_outsourcer = $value->checked_by_outsourcer;
+                $tempVar->checked_by_client = $value->checked_by_client;
+                $tempVar->card_created_at = $value->created_at;
+                $tempVar->card_updated_at = $value->updated_at;
+                $tempVar->board_id = $value->board_id;
+                $tempVar->stack_name = $value->stack_name;
+                $tempVar->stack_author = $value->stack_author;
+                $tempVar->stack_created_at = $value->created_at;
+                $tempVar->stack_updated_at = $value->updated_at;
+                $tempVar->board_name = $value->board_name;
+                $tempVar->board_author = $value->board_author;
+                $tempVar->board_created_at = $value->created_at;
+                $tempVar->board_updated_at = $value->updated_at;
+
+                $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')
+                    ->where('stack_name', 'DoneStacksReservedKeyword')
+                    ->where('board_id', $value->board_id)
+                    ->get();
+
+                foreach ($done_stack_id_name as $value) {
+                    $tempVar->done_stack_id = $value->stack_id;
+                    $tempVar->done_stack_name = $value->stack_name;
+                }
+
+                array_push($tempArray, $tempVar);
+            }
+            $finalVar->data = $tempArray;
+        } else {
+            $finalVar->error = true;
+            $finalVar->message = "No record found";
+        }
+
+        return $finalVar;
+    }
     // Update notes
 
 }
