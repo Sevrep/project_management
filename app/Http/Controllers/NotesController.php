@@ -257,5 +257,14 @@ class NotesController extends Controller
         return $finalVar;
     }
     // Update notes
-
+    public function update_note_content(Request $request, $note_id)
+    {
+        $existingNote = Notes::find($note_id);
+        if ($existingNote) {
+            $existingNote->note_content = $request->note['note_content'];
+            $existingNote->save();
+            return $existingNote;
+        }
+        return "Note not found.";
+    }
 }

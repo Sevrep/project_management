@@ -107,6 +107,6 @@ Route::prefix('/notes')->group(function () {
 });
 Route::prefix('/note')->group(function () {
     Route::post('/create_note', [NotesController::class, 'create_note']);
-    // Route::put('/{teams_id}', [TeamsController::class, 'update']);
+    Route::put('/{note_id}', [NotesController::class, 'update_note_content']);
     // Route::delete('/{teams_id}', [TeamsController::class, 'destroy']);
 });
