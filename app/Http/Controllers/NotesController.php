@@ -114,24 +114,14 @@ class NotesController extends Controller
         }
         return $finalVar;
     }
-    // Read ui notes
+
     public function read_all_ui_notes()
     {
         $tempArray = array();
         $finalVar = new Notes;
 
-        $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
-            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
-            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
-            ->where('notes.ui_requirements', '>', '0')
-            ->orderBy('notes.updated_at', 'DESC')
-            ->get();
-        $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
-            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
-            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
-            ->where('notes.ui_requirements', '>', '0')
-            ->orderBy('notes.updated_at', 'DESC')
-            ->count();
+        $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')->where('notes.ui_requirements', '>', '0')->orderBy('notes.updated_at', 'DESC')->get();
+        $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')->where('notes.ui_requirements', '>', '0')->orderBy('notes.updated_at', 'DESC')->count();
 
         if ($count_note_uis > 0) {
             foreach ($note_uis as $value) {
@@ -165,10 +155,7 @@ class NotesController extends Controller
                 $tempVar->board_created_at = $value->created_at;
                 $tempVar->board_updated_at = $value->updated_at;
 
-                $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')
-                    ->where('stack_name', 'DoneStacksReservedKeyword')
-                    ->where('board_id', $value->board_id)
-                    ->get();
+                $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')->where('stack_name', 'DoneStacksReservedKeyword')->where('board_id', $value->board_id)->get();
 
                 foreach ($done_stack_id_name as $value) {
                     $tempVar->done_stack_id = $value->stack_id;
@@ -185,24 +172,14 @@ class NotesController extends Controller
 
         return $finalVar;
     }
-    // Read feedback notes
+
     public function read_all_feedback_notes()
     {
         $tempArray = array();
         $finalVar = new Notes;
 
-        $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
-            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
-            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
-            ->where('notes.feedback', '>', '0')
-            ->orderBy('notes.updated_at', 'DESC')
-            ->get();
-        $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')
-            ->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')
-            ->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')
-            ->where('notes.feedback', '>', '0')
-            ->orderBy('notes.updated_at', 'DESC')
-            ->count();
+        $note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')->where('notes.feedback', '>', '0')->orderBy('notes.updated_at', 'DESC')->get();
+        $count_note_uis = Notes::leftJoin('cards', 'cards.card_id', '=', 'notes.card_id')->leftJoin('stacks', 'stacks.stack_id', '=', 'cards.stack_id')->leftJoin('boards', 'boards.board_id', '=', 'stacks.board_id')->where('notes.feedback', '>', '0')->orderBy('notes.updated_at', 'DESC')->count();
 
         if ($count_note_uis > 0) {
             foreach ($note_uis as $value) {
@@ -235,11 +212,8 @@ class NotesController extends Controller
                 $tempVar->board_author = $value->board_author;
                 $tempVar->board_created_at = $value->created_at;
                 $tempVar->board_updated_at = $value->updated_at;
-
-                $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')
-                    ->where('stack_name', 'DoneStacksReservedKeyword')
-                    ->where('board_id', $value->board_id)
-                    ->get();
+                
+                $done_stack_id_name = Stacks::select('stacks.stack_id', 'stacks.stack_name')->where('stack_name', 'DoneStacksReservedKeyword')->where('board_id', $value->board_id)->get();
 
                 foreach ($done_stack_id_name as $value) {
                     $tempVar->done_stack_id = $value->stack_id;
@@ -253,10 +227,9 @@ class NotesController extends Controller
             $finalVar->error = true;
             $finalVar->message = "No record found";
         }
-
         return $finalVar;
     }
-    // Update notes
+
     public function update_note_content(Request $request, $note_id)
     {
         $existingNote = Notes::find($note_id);
