@@ -10,8 +10,6 @@ use App\Models\CardFiles;
 use App\Models\CardFileNotifications;
 use App\Models\Notes;
 use App\Models\NoteNotifications;
-use App\Models\NoteFiles;
-use App\Models\NoteFileNotifications;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -123,20 +121,7 @@ class ProjectController extends Controller
 
     public function delete_project($project_id)
     {
-        // stacks
-        // DB::statement(DB::raw("DELETE stacks, cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
-        // FROM stacks        
-        // LEFT JOIN cards ON stacks.stack_id = cards.stack_id
-        // LEFT JOIN card_files ON cards.card_id = card_files.card_id
-        // LEFT JOIN card_file_notifications ON card_files.card_file_id = card_file_notifications.card_file_id
-        // LEFT JOIN notes ON cards.card_id = notes.card_id
-        // LEFT JOIN note_notifications ON notes.note_id = note_notifications.note_id
-        // LEFT JOIN note_files ON notes.note_id = note_files.note_id
-        // LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
-        // WHERE stacks.board_id = $project_id"));
-
-        // projects
-        $delete_project = DB::statement(DB::raw("DELETE projects, boards, stacks, cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
+        DB::statement(DB::raw("DELETE projects, boards, stacks, cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
         FROM projects
         LEFT JOIN boards ON projects.project_id = boards.project_id
         LEFT JOIN stacks ON boards.board_id = stacks.board_id
@@ -148,6 +133,5 @@ class ProjectController extends Controller
         LEFT JOIN note_files ON notes.note_id = note_files.note_id
         LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
         WHERE projects.project_id = $project_id"));
-        return $delete_project;
     }
 }

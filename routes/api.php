@@ -69,8 +69,9 @@ Route::get('/boards/{project_id}', [BoardsController::class, 'read_project_board
 Route::prefix('/board')->group(function () {
     Route::post('/create_board', [BoardsController::class, 'create_board']);
     Route::put('/{board_id}', [BoardsController::class, 'update_board']);
-    // TODO
-    // Route::delete('/{project_id}', [BoardsController::class, 'destroy']);
+    
+    Route::post('/create_test_board', [BoardsController::class, 'create_test_board']);
+    Route::delete('/delete_board/{board_id}', [BoardsController::class, 'delete_board']);
 });
 
 // Stacks
