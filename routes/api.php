@@ -80,8 +80,8 @@ Route::get('/read_board_done_stacks', [StacksController::class, 'read_board_done
 Route::prefix('/stack')->group(function () {
     Route::post('/create_stack', [StacksController::class, 'create_stack']);
     Route::put('/{stack_id}', [StacksController::class, 'update_stack']);
-    // TODO
-    // Route::delete('/{project_id}', [StacksController::class, 'destroy']);
+    
+    Route::post('/create_test_stack', [StacksController::class, 'create_test_stack']);
 });
 
 // Cards
