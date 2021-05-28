@@ -107,4 +107,18 @@ class StacksController extends Controller
 
         return $test;
     }
+
+    public function delete_stack($stack_id)
+    {
+        DB::statement(DB::raw("DELETE stacks, cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
+        FROM stacks
+        LEFT JOIN cards ON stacks.stack_id = cards.stack_id
+        LEFT JOIN card_files ON cards.card_id = card_files.card_id
+        LEFT JOIN card_file_notifications ON card_files.card_file_id = card_file_notifications.card_file_id
+        LEFT JOIN notes ON cards.card_id = notes.card_id
+        LEFT JOIN note_notifications ON notes.note_id = note_notifications.note_id
+        LEFT JOIN note_files ON notes.note_id = note_files.note_id
+        LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
+        WHERE stacks.stack_id = $stack_id"));
+    }
 }

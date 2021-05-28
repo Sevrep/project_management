@@ -82,6 +82,7 @@ Route::prefix('/stack')->group(function () {
     Route::put('/{stack_id}', [StacksController::class, 'update_stack']);
     
     Route::post('/create_test_stack', [StacksController::class, 'create_test_stack']);
+    Route::delete('/delete_stack/{stack_id}', [StacksController::class, 'delete_stack']);
 });
 
 // Cards
