@@ -61,7 +61,7 @@ Route::prefix('/project')->group(function () {
     Route::delete('/{project_id}', [ProjectController::class, 'destroy']);
     
     Route::post('/create_test_project', [ProjectController::class, 'create_test_project']);
-    Route::get('/delete_project/{project_id}', [ProjectController::class, 'delete_project']);
+    Route::delete('/delete_project/{project_id}', [ProjectController::class, 'delete_project']);
 });
 
 // Boards

@@ -55,7 +55,7 @@ class ProjectController extends Controller
         }
         return "Project not found.";
     }
-    
+
     public function create_test_project(Request $request)
     {
         $test = array();
@@ -64,7 +64,7 @@ class ProjectController extends Controller
         $newProject = new Project;
         $newProject->project_name = $name;
         $newProject->project_author = $name;
-        $newProject->save();        
+        $newProject->save();
 
         $newBoard = new Boards;
         $newBoard->project_id = $newProject->project_id;
@@ -120,22 +120,34 @@ class ProjectController extends Controller
 
         return $test;
     }
-    
+
     public function delete_project($project_id)
     {
-        $existingProject = Project::find($project_id);
-        $existingBoard = Boards::where('project_id', $existingProject->project_id)->get();
-        $existingStack = Stacks::where('board_id', $existingBoard->board_id)->get();
-        $existingCard = Cards::where('stack_id', $existingStack->stack_id)->get();
-        $existingCardFile = CardFiles::where('card_id', $existingCard->card_id)->get();
-        $existingCardFileNotification = CardFileNotifications::where('card_file_id', $existingCardFile->card_file_id)->get();
-        $existingNote = Notes::where('card_id', $existingCard->card_id)->get();
-        $existingNoteNotification = NoteNotifications::where('note_id', $existingNote->note_id)->get();
+        // stacks
+        // DB::statement(DB::raw("DELETE stacks, cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
+        // FROM stacks        
+        // LEFT JOIN cards ON stacks.stack_id = cards.stack_id
+        // LEFT JOIN card_files ON cards.card_id = card_files.card_id
+        // LEFT JOIN card_file_notifications ON card_files.card_file_id = card_file_notifications.card_file_id
+        // LEFT JOIN notes ON cards.card_id = notes.card_id
+        // LEFT JOIN note_notifications ON notes.note_id = note_notifications.note_id
+        // LEFT JOIN note_files ON notes.note_id = note_files.note_id
+        // LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
+        // WHERE stacks.board_id = $project_id"));
 
-        if ($existingProject) {
-            // $existingProject->delete();
-            return "Project " . $existingProject .  $existingBoard . $existingStack . $existingCard . $existingCardFile . $existingCardFileNotification . $existingCardFileNotification . $existingNote . $existingNoteNotification ." successfully deleted.";
-        }
-        return "Project not found.";
+        // projects
+        $delete_project = DB::statement(DB::raw("DELETE projects, boards, stacks, cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
+        FROM projects
+        LEFT JOIN boards ON projects.project_id = boards.project_id
+        LEFT JOIN stacks ON boards.board_id = stacks.board_id
+        LEFT JOIN cards ON stacks.stack_id = cards.stack_id
+        LEFT JOIN card_files ON cards.card_id = card_files.card_id
+        LEFT JOIN card_file_notifications ON card_files.card_file_id = card_file_notifications.card_file_id
+        LEFT JOIN notes ON cards.card_id = notes.card_id
+        LEFT JOIN note_notifications ON notes.note_id = note_notifications.note_id
+        LEFT JOIN note_files ON notes.note_id = note_files.note_id
+        LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
+        WHERE projects.project_id = $project_id"));
+        return $delete_project;
     }
 }
