@@ -12,6 +12,7 @@ use App\Models\CardFileNotifications;
 use App\Models\NoteFiles;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class NotesController extends Controller
 {
@@ -239,5 +240,39 @@ class NotesController extends Controller
             return $existingNote;
         }
         return "Note not found.";
+    }
+
+    public function create_test_note(Request $request)
+    {
+        $test = array();
+        $id = $request->note["card_id"];
+        $name = $request->note["note_name"];
+
+        $newNote = new Notes;
+        $newNote->card_id = $id;
+        $newNote->note_content = $name;
+        $newNote->ui_requirements = 1;
+        $newNote->feedback = 1;
+        $newNote->save();
+
+        $newNoteNotification = new NoteNotifications;
+        $newNoteNotification->note_id = $newNote->note_id;
+        $newNoteNotification->note_notification_reader = $name;
+        $newNoteNotification->save();
+
+        array_push($test, $newNote);
+        array_push($test, $newNoteNotification);
+
+        return $test;
+    }
+
+    public function delete_note($note_id)
+    {
+        DB::statement(DB::raw("DELETE notes, note_notifications, note_files, note_file_notifications
+        FROM notes
+        LEFT JOIN note_notifications ON notes.note_id = note_notifications.note_id
+        LEFT JOIN note_files ON notes.note_id = note_files.note_id
+        LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
+        WHERE notes.note_id = $note_id"));
     }
 }
