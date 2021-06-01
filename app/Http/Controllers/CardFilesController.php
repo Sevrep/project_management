@@ -6,6 +6,7 @@ use App\Models\CardFiles;
 use App\Models\CardFileNotifications;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CardFilesController extends Controller
 {
@@ -95,5 +96,36 @@ class CardFilesController extends Controller
             return $existingCardFile;
         }
         return "Card file not found.";
+    }
+
+    public function create_test_card_file(Request $request)
+    {
+        $test = array();
+        $id = $request->card_file["card_id"];
+        $name = $request->card_file["card_file_name"];
+
+        $newCardFile = new CardFiles;
+        $newCardFile->card_id = $id;
+        $newCardFile->card_file_title = $name;
+        $newCardFile->card_file_filename = $name;
+        $newCardFile->save();
+
+        $newCardFileNotification = new CardFileNotifications;
+        $newCardFileNotification->card_file_id = $newCardFile->card_file_id;
+        $newCardFileNotification->card_file_notification_reader = $name;
+        $newCardFileNotification->save();
+
+        array_push($test, $newCardFile);
+        array_push($test, $newCardFileNotification);
+
+        return $test;
+    }
+
+    public function delete_card_file($card_file_id)
+    {
+        DB::statement(DB::raw("DELETE card_files, card_file_notifications
+        FROM card_files
+        LEFT JOIN card_file_notifications ON card_files.card_file_id = card_file_notifications.card_file_id
+        WHERE card_files.card_file_id = $card_file_id"));
     }
 }

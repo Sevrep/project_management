@@ -104,6 +104,8 @@ Route::prefix('/card')->group(function () {
 Route::get('/read_card_files/{card_id}/{reader}', [CardFilesController::class, 'read_card_files']);
 Route::post('/upload_card_file/{card_id}/{reader}', [CardFilesController::class, 'upload_card_file']);
 Route::put('/update_card_file_title/{card_file_id}', [CardFilesController::class, 'update_card_file_title']);
+Route::post('/create_test_card_file', [CardFilesController::class, 'create_test_card_file']);
+Route::delete('/delete_card_file/{card_file_id}', [CardFilesController::class, 'delete_card_file']);
 
 // Notes
 Route::prefix('/notes')->group(function () {
