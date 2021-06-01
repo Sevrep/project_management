@@ -471,6 +471,49 @@ class CardsController extends Controller
         return "Card not found.";
     }
 
-    // TODO
-    // Delete card
+    public function create_test_card(Request $request)
+    {
+        $test = array();
+        $id = $request->card["stack_id"];
+        $name = $request->card["card_name"];
+
+        $newCard = new Cards;
+        $newCard->stack_id = $id;
+        $newCard->card_priority = "D";
+        $newCard->card_name = $name;
+        $newCard->card_author = $name;
+        $newCard->card_progress = 55;
+        $newCard->save();
+
+        $newCardFile = new CardFiles;
+        $newCardFile->card_id = $newCard->card_id;
+        $newCardFile->card_file_title = $name;
+        $newCardFile->card_file_filename = $name;
+        $newCardFile->save();
+
+        $newCardFileNotification = new CardFileNotifications;
+        $newCardFileNotification->card_file_id = $newCardFile->card_file_id;
+        $newCardFileNotification->card_file_notification_reader = $name;
+        $newCardFileNotification->save();
+
+        $newNote = new Notes;
+        $newNote->card_id = $newCard->card_id;
+        $newNote->note_content = $name;
+        $newNote->ui_requirements = 1;
+        $newNote->feedback = 1;
+        $newNote->save();
+
+        $newNoteNotification = new NoteNotifications;
+        $newNoteNotification->note_id = $newNote->note_id;
+        $newNoteNotification->note_notification_reader = $name;
+        $newNoteNotification->save();
+
+        array_push($test, $newCard);
+        array_push($test, $newCardFile);
+        array_push($test, $newCardFileNotification);
+        array_push($test, $newNote);
+        array_push($test, $newNoteNotification);
+
+        return $test;
+    }
 }
