@@ -9,8 +9,11 @@ use App\Models\CardFileNotifications;
 use App\Models\Notes;
 use App\Models\NoteFiles;
 use App\Models\NoteNotifications;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+
 use PHPMailer\PHPMailer\PHPMailer;
 
 class CardsController extends Controller
@@ -515,5 +518,18 @@ class CardsController extends Controller
         array_push($test, $newNoteNotification);
 
         return $test;
+    }
+
+    public function delete_card($card_id)
+    {
+        DB::statement(DB::raw("DELETE cards, card_files, card_file_notifications, notes, note_notifications, note_files, note_file_notifications
+        FROM cards
+        LEFT JOIN card_files ON cards.card_id = card_files.card_id
+        LEFT JOIN card_file_notifications ON card_files.card_file_id = card_file_notifications.card_file_id
+        LEFT JOIN notes ON cards.card_id = notes.card_id
+        LEFT JOIN note_notifications ON notes.note_id = note_notifications.note_id
+        LEFT JOIN note_files ON notes.note_id = note_files.note_id
+        LEFT JOIN note_file_notifications ON note_files.note_file_id = note_file_notifications.note_file_id
+        WHERE cards.card_id = $card_id"));
     }
 }
